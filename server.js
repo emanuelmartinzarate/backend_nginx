@@ -1,3 +1,5 @@
+require('dotenv').config()
+const yargs = require('yargs')(process.argv.slice(2))
 const express = require('express')
 const session = require('express-session')
 const passport = require('passport')
@@ -9,7 +11,17 @@ const routes = require('./routes')
 
 const app = express()
 app.use(express.urlencoded({ extended:true }))
-const port = 3000
+
+const argv = yargs
+    .default({
+        port:3000
+    })
+    .alias({
+        p:'port'
+    })
+    .argv
+
+const port = argv.port
 
 
 
@@ -112,7 +124,7 @@ function connectDB(url,cb){
     )
 }
 
-connectDB('mongodb://localhost:27017/coderhouse', err => {
+connectDB(`mongodb://${process.env.HOST_DB}:${process.env.PORT_DB}/coderhouse`, err => {
   if(err) return console.log('Error connecting DB',err)  
 
   app.listen(port, () => console.log(`Example app listening on port ${port}!`))
