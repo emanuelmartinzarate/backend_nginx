@@ -110,6 +110,20 @@ app.get('/private',checkAuthentication, (req,res) => {
     res.send('<h1>Solo pudiste entrar porque estas logueado 🚀 </h1>')
 })
 
+app.get('/info', (req, res) => {
+    const processDetails = {
+        'Argumento de entrada': process.argv,
+        'Nombre de la plataforma': process.platform,
+        'Version de node.js':process.version,
+        'Memoria total reservada (rss)':process.memoryUsage.rss(),
+        'Path de ejecución':process.execPath,
+        'Process id':process.pid,
+        'Carpeta del proyecto':process.cwd()
+        
+    }
+  res.json(processDetails)
+})
+
 function connectDB(url,cb){
     mongoose.connect(
         url,
