@@ -8,6 +8,7 @@ const mongoose = require('mongoose')
 const { urlencoded } = require('express')
 const Users = require('./model')
 const routes = require('./routes')
+const { fork } = require('child_process')
 
 const app = express()
 app.use(express.urlencoded({ extended:true }))
@@ -122,6 +123,18 @@ app.get('/info', (req, res) => {
         
     }
   res.json(processDetails)
+})
+
+app.get('/api/random',(req,res) => {
+    const cant  = req.query.cant || 500000000
+
+    const computo = fork('./random.js')
+    computo.send({cant})
+    computo.on('message', result => {
+        return res.json(result)
+    })
+
+    
 })
 
 function connectDB(url,cb){
