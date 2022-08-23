@@ -1,6 +1,3 @@
-const random = () => {
-
-}
 
 process.on('message', msg => {
     let cant = parseInt(msg.cant)
