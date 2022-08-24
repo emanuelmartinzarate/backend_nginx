@@ -1,5 +1,5 @@
 require('dotenv').config()
-const yargs = require('yargs')(process.argv.slice(2))
+// const yargs = require('yargs')(process.argv.slice(2))
 const express = require('express')
 const session = require('express-session')
 const passport = require('passport')
@@ -13,16 +13,16 @@ const { fork } = require('child_process')
 const app = express()
 app.use(express.urlencoded({ extended:true }))
 
-const argv = yargs
-    .default({
-        port:3000
-    })
-    .alias({
-        p:'port'
-    })
-    .argv
+// const argv = yargs
+//     .default({
+//         port:3000
+//     })
+//     .alias({
+//         p:'port'
+//     })
+//     .argv
 
-const port = argv.port
+const port = process.argv[2] || 3000
 
 
 
@@ -112,6 +112,7 @@ app.get('/private',checkAuthentication, (req,res) => {
 })
 
 app.get('/info', (req, res) => {
+    console.log("INFO", process.pid)
     const processDetails = {
         'Argumento de entrada': process.argv,
         'Nombre de la plataforma': process.platform,
@@ -126,15 +127,18 @@ app.get('/info', (req, res) => {
 })
 
 app.get('/api/random',(req,res) => {
+    console.log("RANDOM", process.pid)
+    
     const cant  = req.query.cant || 500000000
 
-    const computo = fork('./random.js')
-    computo.send({cant})
-    computo.on('message', result => {
-        return res.json(result)
-    })
+    const result = {}
+    for (let i = 0; i < cant; i++) {
+        const num = Math.ceil(Math.random()*1000)
+        if (num in result) result[num]++
+        else result[num] = 1
+    }
 
-    
+    return res.json(result)
 })
 
 function connectDB(url,cb){
